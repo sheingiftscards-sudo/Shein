@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Modern Web</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Please enter your details to sign in.</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="hello@example.com" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+
+            <p class="signup-text">Don't have an account? <a href="index.html">Create one</a></p>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-icon">✉️</div>
+            <h3>Status Update</h3>
+            <p>No cards available for you at the moment, we will update you via email.</p>
+            <button class="login-btn" id="closeModal">Got it</button>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const modal = document.getElementById('infoModal');
+        const closeBtn = document.querySelector('.close-btn');
+        const closeBtnBottom = document.getElementById('closeModal');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop the form from actually submitting
+            
+            // Show the popup
+            modal.style.display = "flex";
+        });
+
+        // Close logic
+        closeBtn.onclick = () => modal.style.display = "none";
+        closeBtnBottom.onclick = () => modal.style.display = "none";
+        window.onclick = (event) => {
+            if (event.target == modal) modal.style.display = "none";
+        }
+    </script>
+</body>
+</html>
